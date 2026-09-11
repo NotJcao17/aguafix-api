@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: aguafix-db
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_PASSWORD=secret123
+      - POSTGRES_DB=aguafixdb
+    volumes:
+      - postgres_data_db:/var/lib/postgresql/data
+
+volumes:
+  postgres_data_db:
