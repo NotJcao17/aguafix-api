@@ -4,10 +4,12 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './db/data-source';
 import { ReportsModule } from './reports/reports.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
     ReportsModule,
+    EmailModule,
     TypeOrmModule.forRoot(dataSourceOptions)
   ],
   controllers: [AppController],
