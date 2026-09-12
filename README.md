@@ -23,7 +23,9 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+API para que los ciudadanos reporten fugas de agua en la via publica. Al crear un
+reporte se guarda en PostgreSQL y se envia un correo de aviso a la cuadrilla de
+mantenimiento con los datos de la fuga.
 
 ## Project setup
 
