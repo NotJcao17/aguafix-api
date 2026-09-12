@@ -2,12 +2,16 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { CreateReportDto } from './dtos/create-report.dto';
 import { BodyResponse } from 'src/common/dtos/body-response.dto';
 import { ReportsService } from './reports.service';
+import { EmailService } from 'src/email/email.service';
+import { generateReportTemplate } from './templates/report.template';
+import { envs } from 'src/config/envs';
 
 @Controller('reports')
 export class ReportsController {
 
     constructor(
-        private reportsService: ReportsService
+        private reportsService: ReportsService,
+        private emailService: EmailService
     ) {}
 
     @Get()
@@ -43,6 +47,14 @@ export class ReportsController {
         }
         try {
             const report = await this.reportsService.createReport(createReportDto);
+
+            const template = generateReportTemplate(createReportDto);
+            await this.emailService.sendEmail(
+                envs.CREW_EMAIL,
+                `Nueva fuga reportada en ${createReportDto.address}`,
+                template
+            );
+
             response.data = report;
             return response;
         }
