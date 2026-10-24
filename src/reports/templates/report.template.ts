@@ -12,7 +12,7 @@ const row = (label: string, value: string) => `
                 <td align="right" style="padding:14px 0;border-bottom:1px solid #dfe9f2;font-family:Helvetica,Arial,sans-serif;font-size:16px;line-height:22px;color:#123a5c;font-weight:bold;">${value}</td>
               </tr>`;
 
-export const generateReportTemplate = (dto: CreateReportDto): string => {
+export const generateReportTemplate = (dto: CreateReportDto, photoUrl: string): string => {
   const { address, description, severity, reporterPhone } = dto;
   const severityInfo = SEVERITY_INFO[severity] ?? {
     label: severity,
@@ -50,6 +50,16 @@ export const generateReportTemplate = (dto: CreateReportDto): string => {
                     <td style="background-color:${severityInfo.background};border-radius:999px;padding:8px 20px;font-family:Helvetica,Arial,sans-serif;font-size:13px;line-height:18px;font-weight:bold;letter-spacing:.8px;text-transform:uppercase;color:${severityInfo.color};">Severidad: ${severityInfo.label}</td>
                   </tr>
                 </table>
+              </td>
+            </tr>
+
+            <!-- Foto de la fuga -->
+            <tr>
+              <td style="padding:24px 32px 0 32px;">
+                <h2 style="margin:0 0 12px 0;font-family:Helvetica,Arial,sans-serif;font-size:14px;line-height:20px;letter-spacing:1px;text-transform:uppercase;color:#0d6ba8;">Foto de la fuga</h2>
+                <a href="${photoUrl}" target="_blank" style="text-decoration:none;">
+                  <img src="${photoUrl}" alt="Foto de la fuga reportada" width="496" style="display:block;width:100%;max-width:496px;height:auto;border:0;border-radius:12px;" />
+                </a>
               </td>
             </tr>
 

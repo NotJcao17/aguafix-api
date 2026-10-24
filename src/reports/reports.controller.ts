@@ -1,17 +1,20 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateReportDto } from './dtos/create-report.dto';
 import { BodyResponse } from 'src/common/dtos/body-response.dto';
 import { ReportsService } from './reports.service';
 import { EmailService } from 'src/email/email.service';
 import { generateReportTemplate } from './templates/report.template';
 import { envs } from 'src/config/envs';
+import { StorageService } from 'src/storage/storage.service';
 
 @Controller('reports')
 export class ReportsController {
 
     constructor(
         private reportsService: ReportsService,
-        private emailService: EmailService
+        private emailService: EmailService,
+        private storageService: StorageService
     ) {}
 
     @Get()
@@ -36,9 +39,18 @@ export class ReportsController {
     }
 
     @Post()
+    @UseInterceptors(FileInterceptor('photo'))
     async createReport(
-        @Body() createReportDto: CreateReportDto
+        @Body() createReportDto: CreateReportDto,
+        @UploadedFile() photo: Express.Multer.File
     ) {
+        if (!photo) {
+            throw new BadRequestException("La foto de la fuga es obligatoria (campo 'photo')");
+        }
+        if (!photo.mimetype.startsWith('image/')) {
+            throw new BadRequestException("El archivo 'photo' debe ser una imagen");
+        }
+
         const response: BodyResponse = {
             status: 200,
             error: false,
@@ -46,9 +58,10 @@ export class ReportsController {
             data: undefined
         }
         try {
-            const report = await this.reportsService.createReport(createReportDto);
+            const photoUrl = await this.storageService.uploadFile(photo, 'reports/');
+            const report = await this.reportsService.createReport(createReportDto, photoUrl);
 
-            const template = generateReportTemplate(createReportDto);
+            const template = generateReportTemplate(createReportDto, photoUrl);
             await this.emailService.sendEmail(
                 envs.CREW_EMAIL,
                 `Nueva fuga reportada en ${createReportDto.address}`,
@@ -59,6 +72,7 @@ export class ReportsController {
             return response;
         }
         catch (e) {
+            console.error(e);
             response.status = 500;
             response.error = true;
             response.errorMessage = "Ocurrio un error al crear el reporte";

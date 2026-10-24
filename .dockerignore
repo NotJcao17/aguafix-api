@@ -1,0 +1,24 @@
+# Variables de entorno y credenciales
+.env
+.env.*
+!.env.template
+
+# Docker
+compose.yaml
+Dockerfile
+.dockerignore
+
+# Dependencias y compilados
+node_modules
+dist
+coverage
+
+# Git y CI
+.git
+.gitignore
+.github
+
+# Otros
+test
+README.md
+*.log

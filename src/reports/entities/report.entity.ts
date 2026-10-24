@@ -20,6 +20,12 @@ export class Report {
     @Column({ default: false })
     isResolved!: boolean;
 
+    @Column()
+    photoUrl!: string;
+
+    @Column({ type: 'varchar', nullable: true })
+    repairPhotoUrl!: string | null;
+
     @CreateDateColumn()
     createdAt!: Date;
 }
